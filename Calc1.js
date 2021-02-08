@@ -68,25 +68,28 @@ function operatorClick(){
         }
     } 
     sqrt.onclick = e => {
+        if(result.value !== ""){
+            const regex = /[^0-9]/g;
 
-        const regex = /[^0-9]/g;
+            if(!regex.test(result.value)){
 
-        if(!regex.test(result.value)){
-
-            result.value = calculate(e.target.value, result.value)
-        }else if(!isNaN(result.value.charAt(result.value.length -1)))
-        {
-            let indexOperator = findLastIndexOperator(result.value);
-    
-            let expressionPreNumber = result.value.slice(0,indexOperator+1);
-    
-            let number = result.value.slice(indexOperator+1)
-            
-            sqrtValue = calculate(e.target.value , number);
-    
-            result.value = `${expressionPreNumber}${roundNumber(sqrtValue)}`;
-        }
+                result.value = calculate(e.target.value, result.value)
+            }
+            else if(!isNaN(result.value.charAt(result.value.length -1)))
+            {
+                let indexOperator = findLastIndexOperator(result.value);
+        
+                let expressionPreNumber = result.value.slice(0,indexOperator+1);
+        
+                let number = result.value.slice(indexOperator+1)
+                
+                sqrtValue = calculate(e.target.value , number);
+        
+                result.value = `${expressionPreNumber}${roundNumber(sqrtValue)}`;
+            }
+         }
     }
+        
     percent.onclick = () => {
 
         result.value =  calculatePercent(result.value)
@@ -185,9 +188,8 @@ function calculateExpression(expression){
     expression = array.join('');
     let arrayOperator = expression.split(/[^\+\*\/\-]/).join('').split('');
 
-    let arrayNumber = expression.split(/[\+\-\*\/]/).map(number => {
-         return number.replace('subtract',"-");
-    })
+    let arrayNumber = expression.split(/[\+\-\*\/]/).map(number => number.replace('subtract',"-"))
+    
     let i = 0;
     return arrayNumber.reduce((calcValue,currentValue) =>  calculate(arrayOperator[i++],calcValue,currentValue));
 }
@@ -214,39 +216,11 @@ function calculatePercent(expression){
             }
             else{
                 percentValue = expression.slice(indexOperator + 1);
-                
+
                 expressionPrePercentValue = expression.slice(0,indexOperator);
 
-                const regex =/\+|\-|\*|\/|\./;
-                if(regex.test(expressionPrePercentValue[expressionPrePercentValue.length - 1])){
+                valuePreOperator = calculateExpression(expressionPrePercentValue);
 
-                    let arr = expressionPrePercentValue.split('');
-                    arr.pop();
-                    expressionPrePercentValue = arr.join('')
-                }
-                
-                if(expressionPrePercentValue.indexOf("-") === 0)
-                {
-                    expressionPrePercentValue = expressionPrePercentValue.replace("-","0-")
-                }
-              
-
-                let array = expressionPrePercentValue.split(/\+(?=\-)|\*(?=\-)|\/(?=\-)/);
-
-                array.forEach((item,index, arr) => {
-
-                    if(isNaN(item)){
-                
-                        arr[index] = item.split(/\+|\*|\/|\-/g);
-                    }
-                })
-                
-                let arrayNumber = b.flat();
-                
-                let arrayOperator = expressionPrePercentValue.split(/\d/).join('').split("");
-                
-                let i = 0;
-                valuePreOperator = arrayNumber.reduce((calcValue,currentValue) => calculate(arrayOperator[i++],calcValue,currentValue));
                 operator = expression[indexOperator];
             }
             let percentConvert = parseFloat(valuePreOperator) *  parseFloat(percentValue) / 100;
@@ -265,7 +239,6 @@ function roundNumber (number)
 
 //add number, operator, sign to expression
 function addExpression (value){
-
     result.value = result.value + value;
 }
 
