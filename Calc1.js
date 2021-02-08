@@ -186,12 +186,7 @@ function calculateExpression(expression){
     let arrayOperator = expression.split(/[^\+\*\/\-]/).join('').split('');
 
     let arrayNumber = expression.split(/[\+\-\*\/]/).map(number => {
-
-        if(isNaN(number)){
-
-            return number.replace('subtract',"-");
-        }
-        return number;
+         return number.replace('subtract',"-");
     })
     let i = 0;
     return arrayNumber.reduce((calcValue,currentValue) =>  calculate(arrayOperator[i++],calcValue,currentValue));
